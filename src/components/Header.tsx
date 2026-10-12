@@ -58,16 +58,18 @@ export const Header: React.FC<HeaderProps> = ({
     setIsMobileDrawerOpen(false);
   };
 
+  const displayName = currentZone.name.replace(' (AC)', '');
+
   return (
     <>
       <header className="sticky top-0 z-40 backdrop-blur-xl bg-[var(--theme-header-bg)] border-b border-[var(--theme-border)] transition-all">
         {/* =========================================================================
-            HEADER TOP ROW: Adaptively partitioned without collision
+            HEADER ROW: Non-colliding flex alignment with guaranteed clearance
         ========================================================================= */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex items-center justify-between gap-2 sm:gap-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex items-center justify-between gap-2 xl:gap-4">
           
-          {/* LEFT: Café Brand Logo & Title */}
-          <div className="flex items-center gap-2.5 sm:gap-3 flex-shrink-0">
+          {/* LEFT: Café Brand Monogram & Title */}
+          <div className="flex items-center gap-2.5 flex-shrink-0">
             <button
               onClick={() => handleNavClick('explore')}
               className="flex items-center gap-2 sm:gap-2.5 group text-left cursor-pointer focus:outline-none"
@@ -77,51 +79,46 @@ export const Header: React.FC<HeaderProps> = ({
                   <span className="font-serif text-sm sm:text-base font-bold text-[var(--theme-text-primary)] tracking-tight">L</span>
                 </div>
               </div>
-              <div className="flex flex-col">
-                <div className="flex items-center gap-1.5">
-                  <span className="font-serif text-base sm:text-lg tracking-wider font-semibold text-[var(--theme-text-primary)] group-hover:text-[var(--theme-accent)] transition-colors whitespace-nowrap">
-                    LUMINA CAFÉ
-                  </span>
-                  <span className="text-[9px] uppercase font-bold tracking-widest px-1.5 py-0.5 rounded bg-[var(--theme-accent)]/20 text-[var(--theme-text-primary)] border border-[var(--theme-accent)]/30 hidden xs:inline-block">
-                    AI
-                  </span>
-                </div>
-                <p className="text-[10px] text-[var(--theme-text-muted)] hidden xl:block whitespace-nowrap">
-                  Digital Companion <span className="text-[var(--theme-accent)] font-medium">Aria</span> · Ground Floor
-                </p>
+              <div className="flex items-center gap-1.5">
+                <span className="font-serif text-base sm:text-lg tracking-wider font-semibold text-[var(--theme-text-primary)] group-hover:text-[var(--theme-accent)] transition-colors whitespace-nowrap">
+                  LUMINA CAFÉ
+                </span>
+                <span className="text-[9px] uppercase font-bold tracking-widest px-1.5 py-0.5 rounded bg-[var(--theme-accent)]/20 text-[var(--theme-text-primary)] border border-[var(--theme-accent)]/30 hidden xs:inline-block">
+                  AI
+                </span>
               </div>
             </button>
           </div>
 
           {/* =========================================================================
-              DESKTOP CENTER (≥ 1024px): Seating Pill + Main Nav Tabs (No Collisions)
+              DESKTOP CENTER (≥ 1024px): Seating Pill + 5 Navigation Tabs
           ========================================================================= */}
-          <div className="hidden lg:flex items-center gap-2 xl:gap-3 flex-shrink min-w-0">
-            {/* Active Seating Zone Pill with Truncation Guard */}
+          <div className="hidden lg:flex items-center gap-2 xl:gap-2.5 flex-shrink-0">
+            {/* Active Seating Zone Pill with Responsive Display */}
             <button
               onClick={onOpenSeatingModal}
               title={`Seated in ${currentZone.name} · ${tableNumber} (Click to change)`}
-              className="flex items-center gap-1.5 xl:gap-2 px-2.5 xl:px-3 py-1.5 rounded-xl bg-[var(--theme-surface-glass)] hover:bg-[var(--theme-surface-elevated)] border border-[var(--theme-border)] text-xs text-[var(--theme-text-primary)] transition-all cursor-pointer group shadow-sm flex-shrink-0 whitespace-nowrap"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-[var(--theme-surface-glass)] hover:bg-[var(--theme-surface-elevated)] border border-[var(--theme-border)] text-xs text-[var(--theme-text-primary)] transition-all cursor-pointer group shadow-sm flex-shrink-0 whitespace-nowrap"
             >
               <span 
                 className="w-2 h-2 rounded-full flex-shrink-0" 
                 style={{ backgroundColor: currentZone.accentColor }} 
               />
-              <span className="font-semibold text-[var(--theme-text-primary)] max-w-[95px] xl:max-w-[140px] truncate">
-                {currentZone.name}
+              <span className="hidden xl:inline font-semibold text-[var(--theme-text-primary)] max-w-[110px] truncate">
+                {displayName}
               </span>
-              <span className="text-[var(--theme-border-accent)] opacity-60">·</span>
+              <span className="hidden xl:inline text-[var(--theme-border-accent)] opacity-60">·</span>
               <span className="font-mono text-[var(--theme-pop)] font-bold">
                 {tableNumber}
               </span>
               <Edit3 className="w-3 h-3 text-[var(--theme-text-muted)] group-hover:text-[var(--theme-accent)] transition-colors ml-0.5 flex-shrink-0" />
             </button>
 
-            {/* Main Navigation Tabs */}
+            {/* Main Navigation Tabs (All 5 items cleanly spaced) */}
             <nav className="flex items-center gap-0.5 xl:gap-1 bg-[var(--theme-surface-glass)] p-1 rounded-xl border border-[var(--theme-border)] flex-shrink-0">
               <button
                 onClick={() => handleNavClick('explore')}
-                className={`px-2.5 xl:px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap ${
+                className={`px-2 xl:px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap ${
                   activeView === 'explore'
                     ? 'bg-[var(--theme-accent)] text-black font-semibold shadow-md'
                     : 'text-[var(--theme-text-muted)] hover:text-[var(--theme-text-primary)] hover:bg-white/5'
@@ -132,7 +129,7 @@ export const Header: React.FC<HeaderProps> = ({
               </button>
               <button
                 onClick={() => handleNavClick('menu')}
-                className={`px-2.5 xl:px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap ${
+                className={`px-2 xl:px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap ${
                   activeView === 'menu'
                     ? 'bg-[var(--theme-accent)] text-black font-semibold shadow-md'
                     : 'text-[var(--theme-text-muted)] hover:text-[var(--theme-text-primary)] hover:bg-white/5'
@@ -143,7 +140,7 @@ export const Header: React.FC<HeaderProps> = ({
               </button>
               <button
                 onClick={() => handleNavClick('waits')}
-                className={`px-2.5 xl:px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap ${
+                className={`px-2 xl:px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap ${
                   activeView === 'waits'
                     ? 'bg-[var(--theme-accent)] text-black font-semibold shadow-md'
                     : 'text-[var(--theme-text-muted)] hover:text-[var(--theme-text-primary)] hover:bg-white/5'
@@ -154,7 +151,7 @@ export const Header: React.FC<HeaderProps> = ({
               </button>
               <button
                 onClick={() => handleNavClick('connect')}
-                className={`px-2.5 xl:px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap ${
+                className={`px-2 xl:px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap ${
                   activeView === 'connect'
                     ? 'bg-[var(--theme-accent)] text-black font-semibold shadow-md'
                     : 'text-[var(--theme-text-muted)] hover:text-[var(--theme-text-primary)] hover:bg-white/5'
@@ -165,7 +162,7 @@ export const Header: React.FC<HeaderProps> = ({
               </button>
               <button
                 onClick={() => handleNavClick('team')}
-                className={`px-2.5 xl:px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap ${
+                className={`px-2 xl:px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap ${
                   activeView === 'team'
                     ? 'bg-[var(--theme-accent)] text-black font-semibold shadow-md'
                     : 'text-[var(--theme-text-muted)] hover:text-[var(--theme-text-primary)] hover:bg-white/5'
@@ -257,14 +254,14 @@ export const Header: React.FC<HeaderProps> = ({
               <span className="font-mono text-[var(--theme-pop)] font-bold">{tableNumber}</span>
             </button>
 
-            {/* Theme Selector Toggle (Compact dots on lg, full name on xl) */}
+            {/* Theme Selector Toggle */}
             <ThemeSelector />
 
-            {/* Ambient Soundscape (Wide desktop xl only) */}
+            {/* Ambient Soundscape Toggle (xl screens only to preserve space) */}
             <button
               onClick={onToggleAmbientSound}
               title={ambientSoundPlaying ? 'Pause café ambient soundscape' : 'Play café acoustic soundscape'}
-              className={`hidden xl:flex p-2 rounded-xl border text-xs transition-all cursor-pointer flex-shrink-0 ${
+              className={`hidden xl:flex p-1.5 rounded-xl border text-xs transition-all cursor-pointer flex-shrink-0 ${
                 ambientSoundPlaying
                   ? 'bg-[var(--theme-accent)]/20 border-[var(--theme-accent)] text-[var(--theme-pop)]'
                   : 'bg-[var(--theme-surface-glass)] border-[var(--theme-border)] text-[var(--theme-text-muted)] hover:text-[var(--theme-text-primary)]'
@@ -273,11 +270,11 @@ export const Header: React.FC<HeaderProps> = ({
               <Volume2 className="w-4 h-4" />
             </button>
 
-            {/* Vouchers & Badges (Wide desktop xl only) */}
+            {/* Vouchers & Badges Wallet (xl screens only) */}
             <button
               onClick={onOpenVouchers}
               title="View earned vouchers & badges"
-              className="hidden xl:flex relative p-2 rounded-xl bg-[var(--theme-surface-glass)] hover:bg-[var(--theme-surface-elevated)] border border-[var(--theme-border)] text-[var(--theme-text-primary)] transition-all cursor-pointer flex-shrink-0"
+              className="hidden xl:flex relative p-1.5 rounded-xl bg-[var(--theme-surface-glass)] hover:bg-[var(--theme-surface-elevated)] border border-[var(--theme-border)] text-[var(--theme-text-primary)] transition-all cursor-pointer flex-shrink-0"
             >
               <Ticket className="w-4 h-4 text-[var(--theme-pop)]" />
               {voucherCount > 0 && (
@@ -306,21 +303,14 @@ export const Header: React.FC<HeaderProps> = ({
             {customerProfile?.isVerified ? (
               <div 
                 title={`Verified Guest: ${customerProfile.name} (${customerProfile.phone})`}
-                className="hidden xl:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-[#10B981]/15 border border-[#10B981]/30 text-xs text-[#10B981] flex-shrink-0"
+                className="hidden 2xl:flex items-center gap-1.5 px-2 py-1 rounded-xl bg-[#10B981]/15 border border-[#10B981]/30 text-xs text-[#10B981] flex-shrink-0"
               >
                 <CheckCircle2 className="w-3.5 h-3.5 text-[#10B981] flex-shrink-0" />
-                <span className="font-semibold truncate max-w-[80px]">
+                <span className="font-semibold truncate max-w-[70px]">
                   {customerProfile.name.split(' ')[0]}
                 </span>
               </div>
-            ) : (
-              <div 
-                title="Guest Session"
-                className="hidden 2xl:flex items-center gap-1 p-2 rounded-xl bg-[var(--theme-surface-glass)] border border-[var(--theme-border)] text-xs text-[var(--theme-text-muted)] flex-shrink-0"
-              >
-                <User className="w-4 h-4" />
-              </div>
-            )}
+            ) : null}
 
             {/* Talk to Aria Button (Desktop / Tablet) */}
             <button
@@ -352,7 +342,7 @@ export const Header: React.FC<HeaderProps> = ({
               style={{ backgroundColor: currentZone.accentColor }} 
             />
             <span className="font-semibold text-[var(--theme-text-primary)] truncate">
-              {currentZone.name}
+              {displayName}
             </span>
             <span className="text-[var(--theme-border-accent)] opacity-60">·</span>
             <span className="font-mono text-[var(--theme-pop)] font-bold">
