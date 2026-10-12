@@ -20,30 +20,30 @@ export const ThemeSelector: React.FC = () => {
   }, []);
 
   return (
-    <div className="relative inline-block text-left" ref={dropdownRef}>
+    <div className="relative inline-block text-left flex-shrink-0" ref={dropdownRef}>
       {/* Floating Pill Trigger */}
-      <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-[var(--theme-surface-glass)] backdrop-blur-xl border border-[var(--theme-border)] shadow-xl transition-all hover:border-[var(--theme-accent)]">
+      <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-[var(--theme-surface-glass)] backdrop-blur-xl border border-[var(--theme-border)] shadow-xl transition-all hover:border-[var(--theme-accent)] flex-shrink-0">
         {/* Theme Dropdown Toggle */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="flex items-center gap-2 px-3 py-1.5 rounded-xl hover:bg-white/10 text-xs font-semibold text-[var(--theme-text-primary)] transition-all cursor-pointer"
+          className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 rounded-xl hover:bg-white/10 text-xs font-semibold text-[var(--theme-text-primary)] transition-all cursor-pointer whitespace-nowrap flex-shrink-0"
           title="Change color palette"
         >
-          <Palette className="w-3.5 h-3.5 text-[var(--theme-accent)] flex-shrink-0 animate-pulse" />
+          <Palette className="w-3.5 h-3.5 text-[var(--theme-accent)] flex-shrink-0" />
           
           {/* 4-Color Swatch Preview */}
-          <div className="flex items-center -space-x-1">
+          <div className="flex items-center -space-x-1 flex-shrink-0">
             <span className="w-2.5 h-2.5 rounded-full border border-black/30" style={{ backgroundColor: colors.c1 }} />
             <span className="w-2.5 h-2.5 rounded-full border border-black/30" style={{ backgroundColor: colors.c2 }} />
             <span className="w-2.5 h-2.5 rounded-full border border-black/30" style={{ backgroundColor: colors.c3 }} />
             <span className="w-2.5 h-2.5 rounded-full border border-black/30" style={{ backgroundColor: colors.c4 }} />
           </div>
 
-          <span className="hidden sm:inline font-mono text-[11px] font-bold tracking-tight">
+          <span className="hidden xl:inline font-mono text-[11px] font-bold tracking-tight whitespace-nowrap">
             {themeDef.name.split('/')[0].trim()}
           </span>
 
-          <ChevronDown className={`w-3 h-3 text-[var(--theme-text-muted)] transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+          <ChevronDown className={`w-3 h-3 text-[var(--theme-text-muted)] transition-transform duration-200 flex-shrink-0 ${isOpen ? 'rotate-180' : ''}`} />
         </button>
 
         <div className="w-[1px] h-4 bg-[var(--theme-border)]" />
