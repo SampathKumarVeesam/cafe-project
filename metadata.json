@@ -1,0 +1,6 @@
+{
+  "name": "Lumina Café – Aria AI Companion",
+  "description": "Meet Aria, the warm, intelligent Digital Companion of Lumina Café. Enjoy sensory zone discovery, conversational ordering, interactive café challenges, dynamic wait times, and café team insights.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
