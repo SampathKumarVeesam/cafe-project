@@ -24,6 +24,8 @@ interface Shockwave {
 export const CustomCursor: React.FC = () => {
   const { colors, mode } = useTheme();
 
+  const [isSupported, setIsSupported] = useState<boolean>(false);
+
   const dotRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
 
@@ -39,10 +41,21 @@ export const CustomCursor: React.FC = () => {
   const animFrameId = useRef<number | null>(null);
 
   useEffect(() => {
-    // Check if device supports hover
     if (typeof window === 'undefined') return;
-    const isTouch = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
-    if (isTouch) return;
+
+    // Strict pointer & hover check
+    const mql = window.matchMedia('(hover: hover) and (pointer: fine)');
+    setIsSupported(mql.matches);
+
+    const handleMediaChange = (e: MediaQueryListEvent) => {
+      setIsSupported(e.matches);
+    };
+
+    if (mql.addEventListener) {
+      mql.addEventListener('change', handleMediaChange);
+    }
+
+    if (!mql.matches) return;
 
     const handleMouseMove = (e: MouseEvent) => {
       mousePos.current = { x: e.clientX, y: e.clientY };
@@ -69,15 +82,15 @@ export const CustomCursor: React.FC = () => {
       // 1. Kinetic Radial Shockwave Wave Expansion
       const waveId = Date.now() + Math.random();
       setShockwaves((prev) => [
-        ...prev.slice(-4), // keep up to 4 concurrent shockwaves
+        ...prev.slice(-4),
         { id: waveId, x: e.clientX, y: e.clientY, color: colors.c3 },
       ]);
       setTimeout(() => {
         setShockwaves((prev) => prev.filter((w) => w.id !== waveId));
       }, 650);
 
-      // 2. Spawn exactly 4 to 6 Drift Particle Droplets matching active theme accent colors
-      const count = Math.floor(Math.random() * 3) + 4; // 4, 5, or 6 droplets
+      // 2. Spawn 4 to 6 Drift Particle Droplets
+      const count = Math.floor(Math.random() * 3) + 4;
       const newParticles: Particle[] = [];
       for (let i = 0; i < count; i++) {
         const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.7;
@@ -87,7 +100,7 @@ export const CustomCursor: React.FC = () => {
           x: e.clientX,
           y: e.clientY,
           vx: Math.cos(angle) * speed,
-          vy: Math.sin(angle) * speed - 1.5, // initial upward fluid burst
+          vy: Math.sin(angle) * speed - 1.5,
           size: 3 + Math.random() * 3.5,
           color: i % 2 === 0 ? colors.c3 : colors.c4,
           alpha: 1,
@@ -113,19 +126,16 @@ export const CustomCursor: React.FC = () => {
     window.addEventListener('mouseup', handleMouseUp, { passive: true });
     document.addEventListener('mouseleave', handleMouseLeave);
 
-    // Physics Animation Loop with rubber-band spring inertia
+    // Physics Animation Loop
     const animate = () => {
-      // 1. Instant 6px Central Pointer Dot
       if (dotRef.current) {
         dotRef.current.style.transform = `translate3d(${mousePos.current.x - 3}px, ${mousePos.current.y - 3}px, 0)`;
         dotRef.current.style.opacity = isVisible.current ? (isHovered.current ? '0.4' : '1') : '0';
       }
 
-      // 2. Elastic Spring physics for 32px Outer Ring
       const dx = mousePos.current.x - ringPos.current.x;
       const dy = mousePos.current.y - ringPos.current.y;
       
-      // Spring constant & damping for playful rubber-band feel
       const spring = 0.18;
       const damping = 0.76;
       ringVel.current.vx = (ringVel.current.vx + dx * spring) * damping;
@@ -145,7 +155,6 @@ export const CustomCursor: React.FC = () => {
         ringRef.current.style.mixBlendMode = isHovered.current ? 'difference' : (mode === 'dark' ? 'screen' : 'multiply');
       }
 
-      // 3. Update Fluid Particle Droplet Physics (Micro-gravity & Drag)
       setParticles((prev) => {
         if (prev.length === 0) return prev;
         return prev
@@ -153,8 +162,8 @@ export const CustomCursor: React.FC = () => {
             ...p,
             x: p.x + p.vx,
             y: p.y + p.vy,
-            vy: p.vy + 0.14, // gentle micro-gravity
-            vx: p.vx * 0.94, // aerodynamic drag
+            vy: p.vy + 0.14,
+            vx: p.vx * 0.94,
             life: p.life + 1,
             alpha: Math.max(0, 1 - p.life / p.maxLife),
           }))
@@ -167,6 +176,9 @@ export const CustomCursor: React.FC = () => {
     animFrameId.current = requestAnimationFrame(animate);
 
     return () => {
+      if (mql.removeEventListener) {
+        mql.removeEventListener('change', handleMediaChange);
+      }
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mousedown', handleMouseDown);
       window.removeEventListener('mouseup', handleMouseUp);
@@ -175,9 +187,12 @@ export const CustomCursor: React.FC = () => {
     };
   }, [colors, mode]);
 
+  // Completely disabled on touch devices / non-pointer devices
+  if (!isSupported) return null;
+
   return (
     <div className="custom-cursor-container pointer-events-none fixed inset-0 z-[999999] overflow-hidden select-none">
-      {/* 1. Central Pointer Dot (6px) - Moves instantly */}
+      {/* 1. Central Pointer Dot (6px) */}
       <div
         ref={dotRef}
         className="fixed top-0 left-0 w-[6px] h-[6px] rounded-full pointer-events-none transition-opacity duration-150"
@@ -188,7 +203,7 @@ export const CustomCursor: React.FC = () => {
         }}
       />
 
-      {/* 2. Elastic Outer Ring (32px) - Floats with rubber-band inertia */}
+      {/* 2. Elastic Outer Ring (32px) */}
       <div
         ref={ringRef}
         className="fixed top-0 left-0 w-[32px] h-[32px] rounded-full border pointer-events-none transition-[border-color,background-color] duration-150 ease-out"
@@ -200,7 +215,7 @@ export const CustomCursor: React.FC = () => {
         }}
       />
 
-      {/* 3. Kinetic Radial Shockwaves on Mouse Click */}
+      {/* 3. Kinetic Radial Shockwaves */}
       {shockwaves.map((wave) => (
         <div
           key={wave.id}
@@ -214,7 +229,7 @@ export const CustomCursor: React.FC = () => {
         />
       ))}
 
-      {/* 4. Drifting Fluid Droplet Particles with Micro-Gravity */}
+      {/* 4. Drifting Fluid Droplet Particles */}
       {particles.map((p) => (
         <div
           key={p.id}

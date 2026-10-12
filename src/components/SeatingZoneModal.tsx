@@ -67,8 +67,8 @@ export const SeatingZoneModal: React.FC<SeatingZoneModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fadeIn">
-      <div className="relative w-full max-w-2xl rounded-3xl overflow-hidden border border-[var(--theme-border)] bg-[var(--theme-surface)] p-6 sm:p-8 shadow-2xl text-[var(--theme-text-primary)] space-y-6 transition-all max-h-[92vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/85 backdrop-blur-md animate-fadeIn overflow-y-auto">
+      <div className="relative w-full max-w-[560px] mx-auto rounded-3xl overflow-hidden border border-[var(--theme-border)] bg-[var(--theme-surface)] p-5 sm:p-7 shadow-2xl text-[var(--theme-text-primary)] space-y-5 transition-all max-h-[92vh] overflow-y-auto my-auto">
         {/* Close Button */}
         <button
           onClick={onClose}
@@ -83,16 +83,16 @@ export const SeatingZoneModal: React.FC<SeatingZoneModalProps> = ({
             <MapPin className="w-3.5 h-3.5" />
             <span>Ground Floor Location Targeting</span>
           </div>
-          <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-[var(--theme-text-primary)]">
+          <h2 className="font-serif text-xl sm:text-2xl font-semibold text-[var(--theme-text-primary)]">
             Where are you seated today?
           </h2>
-          <p className="text-xs sm:text-sm text-[var(--theme-text-muted)]">
+          <p className="text-xs text-[var(--theme-text-muted)]">
             Choose your seating zone below so our baristas can deliver your order directly to your table or prep it for counter takeaway.
           </p>
         </div>
 
-        {/* The 5 Location Zones */}
-        <div className="space-y-2.5">
+        {/* The 5 Location Zones: 1-col stack on mobile, 2-col on wider */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
           {ZONES.map((zone) => {
             const isSelected = activeZone.id === zone.id;
             return (
@@ -182,10 +182,10 @@ export const SeatingZoneModal: React.FC<SeatingZoneModalProps> = ({
 
           <button
             type="submit"
-            className="w-full py-3.5 rounded-xl bg-[var(--theme-accent)] hover:brightness-110 text-black font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-lg shadow-[var(--theme-glow)] cursor-pointer"
+            className="w-full min-h-[48px] py-3.5 rounded-xl bg-[var(--theme-accent)] hover:brightness-110 text-black font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-lg shadow-[var(--theme-glow)] cursor-pointer"
           >
             <Sparkles className="w-4 h-4" />
-            <span>Confirm Seating ({activeZone.name} · {tableInput || 'Table 1'}) & Open Menu</span>
+            <span>Confirm Seating ({activeZone.name} · {tableInput || 'Table 1'})</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </form>

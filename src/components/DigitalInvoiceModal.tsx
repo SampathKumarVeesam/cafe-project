@@ -39,8 +39,8 @@ export const DigitalInvoiceModal: React.FC<DigitalInvoiceModalProps> = ({
   )}`;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fadeIn">
-      <div className="relative w-full max-w-xl rounded-3xl overflow-hidden border border-[var(--theme-border)] bg-[var(--theme-surface)] p-6 sm:p-8 shadow-2xl text-[var(--theme-text-primary)] space-y-6 transition-all max-h-[92vh] overflow-y-auto print:p-0 print:border-none print:shadow-none print:bg-white print:text-black">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/85 backdrop-blur-md animate-fadeIn overflow-y-auto">
+      <div className="relative w-full max-w-[560px] mx-auto rounded-3xl overflow-hidden border border-[var(--theme-border)] bg-[var(--theme-surface)] p-5 sm:p-8 shadow-2xl text-[var(--theme-text-primary)] space-y-6 transition-all max-h-[92vh] overflow-y-auto my-auto print:p-0 print:border-none print:shadow-none print:bg-white print:text-black">
         {/* Close Button */}
         <button
           onClick={onClose}
@@ -209,7 +209,7 @@ export const DigitalInvoiceModal: React.FC<DigitalInvoiceModalProps> = ({
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1 print:hidden">
           <button
             onClick={handlePrint}
-            className="py-3 rounded-xl bg-[var(--theme-surface-elevated)] hover:bg-[var(--theme-border)]/30 border border-[var(--theme-border)] text-xs font-semibold text-[var(--theme-text-primary)] flex items-center justify-center gap-2 transition-all cursor-pointer"
+            className="min-h-[48px] py-3 rounded-xl bg-[var(--theme-surface-elevated)] hover:bg-[var(--theme-border)]/30 border border-[var(--theme-border)] text-xs font-semibold text-[var(--theme-text-primary)] flex items-center justify-center gap-2 transition-all cursor-pointer"
           >
             <Printer className="w-4 h-4" />
             <span>Print Receipt</span>
@@ -219,7 +219,7 @@ export const DigitalInvoiceModal: React.FC<DigitalInvoiceModalProps> = ({
             href={whatsappMessageUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="py-3 rounded-xl bg-[#25D366]/15 hover:bg-[#25D366]/25 border border-[#25D366]/40 text-[#25D366] text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer"
+            className="min-h-[48px] py-3 rounded-xl bg-[#25D366]/15 hover:bg-[#25D366]/25 border border-[#25D366]/40 text-[#25D366] text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer"
           >
             <Share2 className="w-4 h-4" />
             <span>Share to WhatsApp</span>
@@ -230,10 +230,10 @@ export const DigitalInvoiceModal: React.FC<DigitalInvoiceModalProps> = ({
               onClose();
               onTrackOrder();
             }}
-            className="py-3 rounded-xl bg-[var(--theme-accent)] hover:brightness-110 text-black text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all shadow-md shadow-[var(--theme-glow)] cursor-pointer"
+            className="min-h-[48px] py-3 rounded-xl bg-[var(--theme-accent)] hover:brightness-110 text-black text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all shadow-md shadow-[var(--theme-glow)] cursor-pointer"
           >
             <Clock className="w-4 h-4" />
-            <span>Track in Better Waits</span>
+            <span>Track in Waits</span>
           </button>
         </div>
       </div>

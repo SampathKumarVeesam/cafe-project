@@ -20,16 +20,27 @@
   --theme-accent-hover: #FF7590;
   --theme-pop: #FFAA00;
   --theme-glow: rgba(255, 94, 126, 0.25);
-  --theme-header-bg: rgba(26, 11, 46, 0.85);
+  --theme-header-bg: rgba(26, 11, 46, 0.88);
 }
 
 @layer base {
+  html, body, #root {
+    width: 100%;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+    -webkit-text-size-adjust: 100%;
+  }
+
   body {
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
     background-color: var(--theme-bg);
     color: var(--theme-text-primary);
     transition: background-color 0.3s ease, color 0.3s ease;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
   }
+
   h1, h2, h3, h4, .font-serif {
     font-family: 'Fraunces', Georgia, serif;
   }
@@ -98,8 +109,8 @@
   animation: cursorShockwave 0.65s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
 }
 
-/* Touch Device Optimization: Disable Custom Cursor */
-@media (hover: none) and (pointer: coarse) {
+/* Touch Device Optimization: Disable Custom Cursor strictly on non-hover or touch devices */
+@media not all and (hover: hover) and (pointer: fine) {
   .custom-cursor-container {
     display: none !important;
   }

@@ -161,8 +161,8 @@ export const OtpAuthModal: React.FC<OtpAuthModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fadeIn">
-      <div className="relative w-full max-w-md rounded-3xl overflow-hidden border border-[var(--theme-border)] bg-[var(--theme-surface)] p-6 sm:p-7 shadow-2xl text-[var(--theme-text-primary)] space-y-5 transition-all">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/85 backdrop-blur-md animate-fadeIn overflow-y-auto">
+      <div className="relative w-full max-w-[560px] mx-auto rounded-3xl overflow-hidden border border-[var(--theme-border)] bg-[var(--theme-surface)] p-6 sm:p-8 shadow-2xl text-[var(--theme-text-primary)] space-y-5 transition-all my-auto">
         {/* Ambient Top Glow */}
         <div className="absolute top-0 right-0 w-48 h-48 bg-[var(--theme-accent)]/15 rounded-full blur-3xl pointer-events-none" />
 
@@ -259,7 +259,7 @@ export const OtpAuthModal: React.FC<OtpAuthModalProps> = ({
             <button
               type="submit"
               disabled={loading}
-              className="w-full mt-2 py-3 rounded-xl bg-[var(--theme-accent)] hover:brightness-110 text-black font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-md shadow-[var(--theme-glow)] cursor-pointer disabled:opacity-50"
+              className="w-full mt-2 min-h-[48px] py-3 rounded-xl bg-[var(--theme-accent)] hover:brightness-110 text-black font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-md shadow-[var(--theme-glow)] cursor-pointer disabled:opacity-50"
             >
               {loading ? (
                 <>
@@ -336,7 +336,7 @@ export const OtpAuthModal: React.FC<OtpAuthModalProps> = ({
             <button
               type="submit"
               disabled={loading || otpValue.length !== 6}
-              className="w-full py-3 rounded-xl bg-[var(--theme-accent)] hover:brightness-110 text-black font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-md shadow-[var(--theme-glow)] cursor-pointer disabled:opacity-50"
+              className="w-full min-h-[48px] py-3 rounded-xl bg-[var(--theme-accent)] hover:brightness-110 text-black font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-md shadow-[var(--theme-glow)] cursor-pointer disabled:opacity-50"
             >
               {loading ? (
                 <>

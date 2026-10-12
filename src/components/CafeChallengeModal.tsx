@@ -249,8 +249,8 @@ export const CafeChallengeModal: React.FC<CafeChallengeModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
-      <div className="relative w-full max-w-xl rounded-3xl overflow-hidden border border-[var(--theme-border)] bg-[var(--theme-surface)] p-6 sm:p-8 shadow-2xl text-[var(--theme-text-primary)] space-y-6 transition-all">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-md animate-fadeIn overflow-y-auto">
+      <div className="relative w-full max-w-[560px] mx-auto rounded-3xl overflow-hidden border border-[var(--theme-border)] bg-[var(--theme-surface)] p-5 sm:p-8 shadow-2xl text-[var(--theme-text-primary)] space-y-6 transition-all my-auto">
         {/* Atmospheric Zone Background */}
         <div 
           className="absolute inset-0 bg-cover bg-center opacity-15 transition-transform duration-1000 scale-105 pointer-events-none"
@@ -501,7 +501,7 @@ export const CafeChallengeModal: React.FC<CafeChallengeModalProps> = ({
                       key={idx}
                       disabled={isAnswered || evaluating}
                       onClick={() => handleSelectOption(idx)}
-                      className={`w-full p-4 rounded-xl border text-left text-xs sm:text-sm font-medium transition-all flex items-center justify-between gap-3 ${
+                      className={`w-full min-h-[48px] py-3.5 px-4 rounded-xl border text-left text-xs sm:text-sm font-medium transition-all flex items-center justify-between gap-3 ${
                         isAnswered ? 'cursor-default' : 'cursor-pointer hover:scale-[1.01]'
                       } ${optionStyle}`}
                     >

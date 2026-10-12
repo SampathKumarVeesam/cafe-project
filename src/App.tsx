@@ -27,7 +27,8 @@ import { CustomCursor } from './components/CustomCursor';
 import { 
   Sparkles, 
   Coffee, 
-  X
+  X,
+  ArrowRight
 } from 'lucide-react';
 
 function CafeAppContent() {
@@ -333,7 +334,7 @@ function CafeAppContent() {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--theme-bg)] text-[var(--theme-text-primary)] flex flex-col font-sans selection:bg-[var(--theme-accent)]/30 selection:text-[var(--theme-text-primary)] relative transition-colors duration-300">
+    <div className="min-h-[100dvh] w-full overflow-x-hidden bg-[var(--theme-bg)] text-[var(--theme-text-primary)] flex flex-col font-sans selection:bg-[var(--theme-accent)]/30 selection:text-[var(--theme-text-primary)] relative transition-colors duration-300 pb-[env(safe-area-inset-bottom)]">
       {/* Playful Custom Cursor with Physics & Fluid Burst */}
       <CustomCursor />
 
@@ -379,8 +380,8 @@ function CafeAppContent() {
         onToggleAmbientSound={handleToggleAmbientSound}
       />
 
-      {/* Main View Container */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-8 relative z-10">
+      {/* Main View Container with Responsive Gutters */}
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-8 relative z-10">
         {activeView === 'explore' && (
           <GroundFloorMap
             currentZone={currentZone}
@@ -425,22 +426,44 @@ function CafeAppContent() {
         )}
       </main>
 
-      {/* Sticky Bottom Quick-Bar for Mobile / Guests */}
-      <div className="sticky bottom-0 z-30 p-3 bg-[var(--theme-surface-glass)] backdrop-blur-lg border-t border-[var(--theme-border)] sm:hidden flex items-center justify-between gap-2">
-        <button
-          onClick={() => setIsAriaChatOpen(true)}
-          className="flex-1 py-2 rounded-xl bg-[var(--theme-accent)] text-black text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer shadow-md"
-        >
-          <Sparkles className="w-3.5 h-3.5" />
-          <span>Talk to Aria</span>
-        </button>
-        <button
-          onClick={() => setIsCartOpen(true)}
-          className="flex-1 py-2 rounded-xl bg-[var(--theme-surface-elevated)] border border-[var(--theme-border)] text-xs font-semibold text-[var(--theme-text-primary)] flex items-center justify-center gap-1.5 cursor-pointer"
-        >
-          <Coffee className="w-3.5 h-3.5 text-[var(--theme-accent)]" />
-          <span>Tray ({cart.reduce((a, c) => a + c.quantity, 0)})</span>
-        </button>
+      {/* Mobile Fixed Bottom Sticky Summary Bar */}
+      <div className="sticky bottom-0 z-30 px-4 py-3 bg-[var(--theme-surface-glass)] backdrop-blur-xl border-t border-[var(--theme-border-accent)] sm:hidden pb-[max(12px,env(safe-area-inset-bottom))] shadow-2xl">
+        {cart.length > 0 ? (
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex flex-col">
+              <span className="text-[11px] font-mono text-[var(--theme-text-muted)]">
+                {cart.reduce((a, c) => a + c.quantity, 0)} item{cart.reduce((a, c) => a + c.quantity, 0) > 1 ? 's' : ''} in tray
+              </span>
+              <span className="font-serif text-lg font-bold text-[var(--theme-pop)]">
+                ${cart.reduce((a, c) => a + c.price * c.quantity, 0).toFixed(2)}
+              </span>
+            </div>
+            <button
+              onClick={() => setIsCartOpen(true)}
+              className="px-5 py-2.5 rounded-xl bg-[var(--theme-accent)] hover:brightness-110 text-black font-bold text-xs uppercase tracking-wider flex items-center gap-1.5 shadow-lg shadow-[var(--theme-glow)] cursor-pointer"
+            >
+              <span>Instant Checkout</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        ) : (
+          <div className="flex items-center justify-between gap-2">
+            <button
+              onClick={() => setIsAriaChatOpen(true)}
+              className="flex-1 py-2.5 rounded-xl bg-[var(--theme-accent)] text-black text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer shadow-md"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Talk to Aria</span>
+            </button>
+            <button
+              onClick={() => setActiveView('menu')}
+              className="flex-1 py-2.5 rounded-xl bg-[var(--theme-surface-elevated)] border border-[var(--theme-border)] text-xs font-semibold text-[var(--theme-text-primary)] flex items-center justify-center gap-1.5 cursor-pointer"
+            >
+              <Coffee className="w-3.5 h-3.5 text-[var(--theme-accent)]" />
+              <span>Browse Menu</span>
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Footer */}

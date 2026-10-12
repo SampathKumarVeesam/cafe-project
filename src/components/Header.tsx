@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   Sparkles, 
   MapPin, 
@@ -8,7 +8,13 @@ import {
   ShieldCheck, 
   ShoppingBag, 
   Ticket,
-  Volume2
+  Volume2,
+  Menu,
+  X,
+  User,
+  CheckCircle2,
+  ChevronRight,
+  Edit3
 } from 'lucide-react';
 import { Zone, CustomerProfile } from '../data/cafeData';
 import { ThemeSelector } from './ThemeSelector';
@@ -18,7 +24,7 @@ interface HeaderProps {
   tableNumber: string;
   onOpenSeatingModal: () => void;
   customerProfile: CustomerProfile | null;
-  onSelectZoneTab: () => void;
+  onSelectZoneTab?: () => void;
   activeView: 'explore' | 'menu' | 'waits' | 'connect' | 'team';
   setActiveView: (view: 'explore' | 'menu' | 'waits' | 'connect' | 'team') => void;
   cartCount: number;
@@ -35,7 +41,6 @@ export const Header: React.FC<HeaderProps> = ({
   tableNumber,
   onOpenSeatingModal,
   customerProfile,
-  onSelectZoneTab,
   activeView,
   setActiveView,
   cartCount,
@@ -46,229 +51,517 @@ export const Header: React.FC<HeaderProps> = ({
   ambientSoundPlaying,
   onToggleAmbientSound,
 }) => {
+  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState<boolean>(false);
+
+  const handleNavClick = (view: 'explore' | 'menu' | 'waits' | 'connect' | 'team') => {
+    setActiveView(view);
+    setIsMobileDrawerOpen(false);
+  };
+
   return (
-    <header className="sticky top-0 z-40 backdrop-blur-xl bg-[var(--theme-header-bg)] border-b border-[var(--theme-border)] px-4 lg:px-8 py-3 transition-all">
-      <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
-        {/* Brand identity */}
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => setActiveView('explore')}
-            className="flex items-center gap-3 group text-left cursor-pointer focus:outline-none"
-          >
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--theme-accent)] via-[var(--theme-pop)] to-[var(--theme-c1)] p-[1.5px] shadow-lg shadow-[var(--theme-glow)] transition-transform group-hover:scale-105">
-              <div className="w-full h-full bg-[var(--theme-bg)] rounded-[10px] flex items-center justify-center">
-                <span className="font-serif text-lg font-bold text-[var(--theme-text-primary)] tracking-tight">L</span>
+    <>
+      <header className="sticky top-0 z-40 backdrop-blur-xl bg-[var(--theme-header-bg)] border-b border-[var(--theme-border)] transition-all">
+        {/* =========================================================================
+            DESKTOP (≥ 1024px) & TABLET (640px – 1023px) & MOBILE TOP ROW (< 640px)
+        ========================================================================= */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-3">
+          
+          {/* LEFT: Café Brand Logo & Title */}
+          <div className="flex items-center gap-3 flex-shrink-0">
+            <button
+              onClick={() => handleNavClick('explore')}
+              className="flex items-center gap-2.5 sm:gap-3 group text-left cursor-pointer focus:outline-none"
+            >
+              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-[var(--theme-accent)] via-[var(--theme-pop)] to-[var(--theme-c1)] p-[1.5px] shadow-lg shadow-[var(--theme-glow)] transition-transform group-hover:scale-105 flex-shrink-0">
+                <div className="w-full h-full bg-[var(--theme-bg)] rounded-[10px] flex items-center justify-center">
+                  <span className="font-serif text-base sm:text-lg font-bold text-[var(--theme-text-primary)] tracking-tight">L</span>
+                </div>
               </div>
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-serif text-lg tracking-wider font-semibold text-[var(--theme-text-primary)] group-hover:text-[var(--theme-accent)] transition-colors">
-                  LUMINA CAFÉ
+              <div>
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <span className="font-serif text-base sm:text-lg tracking-wider font-semibold text-[var(--theme-text-primary)] group-hover:text-[var(--theme-accent)] transition-colors whitespace-nowrap">
+                    LUMINA CAFÉ
+                  </span>
+                  <span className="text-[9px] sm:text-[10px] uppercase font-bold tracking-widest px-1.5 py-0.5 rounded bg-[var(--theme-accent)]/20 text-[var(--theme-text-primary)] border border-[var(--theme-accent)]/30 hidden xs:inline-block">
+                    AI
+                  </span>
+                </div>
+                <p className="text-[11px] text-[var(--theme-text-muted)] hidden md:block">
+                  Digital Companion <span className="text-[var(--theme-accent)] font-medium">Aria</span> · Ground Floor
+                </p>
+              </div>
+            </button>
+          </div>
+
+          {/* =========================================================================
+              DESKTOP CENTER (≥ 1024px): Active Seating Pill + Main Nav Links
+          ========================================================================= */}
+          <div className="hidden lg:flex items-center gap-3 flex-1 justify-center max-w-3xl">
+            {/* Active Seating Zone Pill with Inline Edit Trigger */}
+            <button
+              onClick={onOpenSeatingModal}
+              title="Click to relocate or change table"
+              className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[var(--theme-surface-glass)] hover:bg-[var(--theme-surface-elevated)] border border-[var(--theme-border)] text-xs text-[var(--theme-text-primary)] transition-all cursor-pointer group shadow-sm flex-shrink-0"
+            >
+              <span 
+                className="w-2.5 h-2.5 rounded-full flex-shrink-0" 
+                style={{ backgroundColor: currentZone.accentColor }} 
+              />
+              <span className="font-semibold text-[var(--theme-text-primary)]">
+                {currentZone.name}
+              </span>
+              <span className="text-[var(--theme-border-accent)] opacity-60">·</span>
+              <span className="font-mono text-[var(--theme-pop)] font-bold">
+                {tableNumber}
+              </span>
+              <Edit3 className="w-3 h-3 text-[var(--theme-text-muted)] group-hover:text-[var(--theme-accent)] transition-colors ml-0.5" />
+            </button>
+
+            {/* Main Navigation Tabs */}
+            <nav className="flex items-center gap-1 bg-[var(--theme-surface-glass)] p-1 rounded-xl border border-[var(--theme-border)]">
+              <button
+                onClick={() => handleNavClick('explore')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
+                  activeView === 'explore'
+                    ? 'bg-[var(--theme-accent)] text-black font-semibold shadow-md'
+                    : 'text-[var(--theme-text-muted)] hover:text-[var(--theme-text-primary)] hover:bg-white/5'
+                }`}
+              >
+                <MapPin className="w-3.5 h-3.5" />
+                <span>Atmosphere</span>
+              </button>
+              <button
+                onClick={() => handleNavClick('menu')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
+                  activeView === 'menu'
+                    ? 'bg-[var(--theme-accent)] text-black font-semibold shadow-md'
+                    : 'text-[var(--theme-text-muted)] hover:text-[var(--theme-text-primary)] hover:bg-white/5'
+                }`}
+              >
+                <Coffee className="w-3.5 h-3.5" />
+                <span>Menu</span>
+              </button>
+              <button
+                onClick={() => handleNavClick('waits')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
+                  activeView === 'waits'
+                    ? 'bg-[var(--theme-accent)] text-black font-semibold shadow-md'
+                    : 'text-[var(--theme-text-muted)] hover:text-[var(--theme-text-primary)] hover:bg-white/5'
+                }`}
+              >
+                <Clock className="w-3.5 h-3.5" />
+                <span>Waits</span>
+              </button>
+              <button
+                onClick={() => handleNavClick('connect')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
+                  activeView === 'connect'
+                    ? 'bg-[var(--theme-accent)] text-black font-semibold shadow-md'
+                    : 'text-[var(--theme-text-muted)] hover:text-[var(--theme-text-primary)] hover:bg-white/5'
+                }`}
+              >
+                <Users className="w-3.5 h-3.5" />
+                <span>Connect</span>
+              </button>
+              <button
+                onClick={() => handleNavClick('team')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
+                  activeView === 'team'
+                    ? 'bg-[var(--theme-accent)] text-black font-semibold shadow-md'
+                    : 'text-[var(--theme-text-muted)] hover:text-[var(--theme-text-primary)] hover:bg-white/5'
+                }`}
+              >
+                <ShieldCheck className="w-3.5 h-3.5" />
+                <span>Team</span>
+              </button>
+            </nav>
+          </div>
+
+          {/* =========================================================================
+              TABLET CENTER (640px – 1023px): Condensed Single-Row Navigation
+          ========================================================================= */}
+          <nav className="hidden sm:flex lg:hidden items-center gap-1 bg-[var(--theme-surface-glass)] p-1 rounded-xl border border-[var(--theme-border)]">
+            <button
+              onClick={() => handleNavClick('explore')}
+              title="Atmosphere & Floor"
+              className={`px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1 transition-all cursor-pointer ${
+                activeView === 'explore'
+                  ? 'bg-[var(--theme-accent)] text-black font-semibold shadow-sm'
+                  : 'text-[var(--theme-text-muted)] hover:text-[var(--theme-text-primary)]'
+              }`}
+            >
+              <MapPin className="w-3.5 h-3.5" />
+              <span className="hidden md:inline">Floor</span>
+            </button>
+            <button
+              onClick={() => handleNavClick('menu')}
+              title="Menu"
+              className={`px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1 transition-all cursor-pointer ${
+                activeView === 'menu'
+                  ? 'bg-[var(--theme-accent)] text-black font-semibold shadow-sm'
+                  : 'text-[var(--theme-text-muted)] hover:text-[var(--theme-text-primary)]'
+              }`}
+            >
+              <Coffee className="w-3.5 h-3.5" />
+              <span className="hidden md:inline">Menu</span>
+            </button>
+            <button
+              onClick={() => handleNavClick('waits')}
+              title="Wait Times"
+              className={`px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1 transition-all cursor-pointer ${
+                activeView === 'waits'
+                  ? 'bg-[var(--theme-accent)] text-black font-semibold shadow-sm'
+                  : 'text-[var(--theme-text-muted)] hover:text-[var(--theme-text-primary)]'
+              }`}
+            >
+              <Clock className="w-3.5 h-3.5" />
+              <span className="hidden md:inline">Waits</span>
+            </button>
+            <button
+              onClick={() => handleNavClick('connect')}
+              title="Connect"
+              className={`px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1 transition-all cursor-pointer ${
+                activeView === 'connect'
+                  ? 'bg-[var(--theme-accent)] text-black font-semibold shadow-sm'
+                  : 'text-[var(--theme-text-muted)] hover:text-[var(--theme-text-primary)]'
+              }`}
+            >
+              <Users className="w-3.5 h-3.5" />
+              <span className="hidden md:inline">Connect</span>
+            </button>
+            <button
+              onClick={() => handleNavClick('team')}
+              title="Team Dashboard"
+              className={`px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1 transition-all cursor-pointer ${
+                activeView === 'team'
+                  ? 'bg-[var(--theme-accent)] text-black font-semibold shadow-sm'
+                  : 'text-[var(--theme-text-muted)] hover:text-[var(--theme-text-primary)]'
+              }`}
+            >
+              <ShieldCheck className="w-3.5 h-3.5" />
+              <span className="hidden md:inline">Team</span>
+            </button>
+          </nav>
+
+          {/* =========================================================================
+              RIGHT CLUSTER: Theme Toggle, Live Cart, Session Profile, Aria, Hamburger
+          ========================================================================= */}
+          <div className="flex items-center gap-2 sm:gap-2.5">
+            {/* Tablet Seating Pill (Iconified / Compact) */}
+            <button
+              onClick={onOpenSeatingModal}
+              title={`Seated in ${currentZone.name} · ${tableNumber}`}
+              className="hidden sm:flex lg:hidden items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-[var(--theme-surface-glass)] border border-[var(--theme-border)] text-xs font-medium cursor-pointer"
+            >
+              <span className="w-2 h-2 rounded-full" style={{ backgroundColor: currentZone.accentColor }} />
+              <span className="font-mono text-[var(--theme-pop)] font-bold">{tableNumber}</span>
+            </button>
+
+            {/* Theme Selector Toggle */}
+            <ThemeSelector />
+
+            {/* Ambient Soundscape (Desktop / Tablet) */}
+            <button
+              onClick={onToggleAmbientSound}
+              title={ambientSoundPlaying ? 'Pause café ambient soundscape' : 'Play café acoustic soundscape'}
+              className={`hidden sm:flex p-2 rounded-xl border text-xs transition-all cursor-pointer ${
+                ambientSoundPlaying
+                  ? 'bg-[var(--theme-accent)]/20 border-[var(--theme-accent)] text-[var(--theme-pop)]'
+                  : 'bg-[var(--theme-surface-glass)] border-[var(--theme-border)] text-[var(--theme-text-muted)] hover:text-[var(--theme-text-primary)]'
+              }`}
+            >
+              <Volume2 className="w-4 h-4" />
+            </button>
+
+            {/* Vouchers & Badges (Desktop / Tablet) */}
+            <button
+              onClick={onOpenVouchers}
+              title="View earned vouchers & badges"
+              className="hidden sm:flex relative p-2 rounded-xl bg-[var(--theme-surface-glass)] hover:bg-[var(--theme-surface-elevated)] border border-[var(--theme-border)] text-[var(--theme-text-primary)] transition-all cursor-pointer"
+            >
+              <Ticket className="w-4 h-4 text-[var(--theme-pop)]" />
+              {voucherCount > 0 && (
+                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[var(--theme-accent)] text-[10px] font-bold text-black flex items-center justify-center">
+                  {voucherCount}
                 </span>
-                <span className="text-[10px] uppercase font-bold tracking-widest px-1.5 py-0.5 rounded bg-[var(--theme-accent)]/20 text-[var(--theme-text-primary)] border border-[var(--theme-accent)]/30">
-                  Google AI
+              )}
+            </button>
+
+            {/* Live Cart Count Badge Button */}
+            <button
+              onClick={onOpenCart}
+              title="Review order tray"
+              className="relative flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-[var(--theme-surface-glass)] hover:bg-[var(--theme-surface-elevated)] border border-[var(--theme-border)] text-xs font-medium text-[var(--theme-text-primary)] transition-all cursor-pointer"
+            >
+              <ShoppingBag className="w-4 h-4 text-[var(--theme-accent)]" />
+              <span className="hidden md:inline">Tray</span>
+              {cartCount > 0 && (
+                <span className="w-5 h-5 rounded-full bg-[var(--theme-accent)] text-black font-bold text-[11px] flex items-center justify-center animate-bounce">
+                  {cartCount}
+                </span>
+              )}
+            </button>
+
+            {/* User Session Profile Icon / Badge */}
+            {customerProfile?.isVerified ? (
+              <div 
+                title={`Verified Guest: ${customerProfile.name} (${customerProfile.phone})`}
+                className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-[#10B981]/15 border border-[#10B981]/30 text-xs text-[#10B981]"
+              >
+                <CheckCircle2 className="w-3.5 h-3.5 text-[#10B981]" />
+                <span className="font-semibold truncate max-w-[80px] lg:max-w-[100px]">
+                  {customerProfile.name.split(' ')[0]}
                 </span>
               </div>
-              <p className="text-xs text-[var(--theme-text-muted)] hidden sm:block">
-                Digital Companion <span className="text-[var(--theme-accent)] font-medium">Aria</span> · Ground Floor
-              </p>
-            </div>
-          </button>
+            ) : (
+              <div 
+                title="Guest Session"
+                className="hidden lg:flex items-center gap-1 p-2 rounded-xl bg-[var(--theme-surface-glass)] border border-[var(--theme-border)] text-xs text-[var(--theme-text-muted)]"
+              >
+                <User className="w-4 h-4" />
+              </div>
+            )}
+
+            {/* Talk to Aria Button (Desktop / Tablet) */}
+            <button
+              onClick={onOpenAriaChat}
+              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-[var(--theme-accent)] to-[var(--theme-pop)] text-black text-xs font-bold shadow-md shadow-[var(--theme-glow)] hover:brightness-110 active:scale-95 transition-all cursor-pointer"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Aria</span>
+            </button>
+
+            {/* MOBILE HAMBURGER BUTTON (< 640px) */}
+            <button
+              onClick={() => setIsMobileDrawerOpen(true)}
+              aria-label="Open navigation drawer"
+              className="sm:hidden p-2 rounded-xl bg-[var(--theme-surface-glass)] hover:bg-[var(--theme-surface-elevated)] border border-[var(--theme-border)] text-[var(--theme-text-primary)] transition-all cursor-pointer"
+            >
+              <Menu className="w-5 h-5 text-[var(--theme-text-primary)]" />
+            </button>
+          </div>
         </div>
 
-        {/* Navigation tabs */}
-        <nav className="hidden md:flex items-center gap-1 bg-[var(--theme-surface-glass)] p-1 rounded-xl border border-[var(--theme-border)]">
-          <button
-            onClick={() => setActiveView('explore')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
-              activeView === 'explore'
-                ? 'bg-[var(--theme-accent)] text-black font-semibold shadow-md'
-                : 'text-[var(--theme-text-muted)] hover:text-[var(--theme-text-primary)] hover:bg-white/5'
-            }`}
-          >
-            <MapPin className="w-3.5 h-3.5" />
-            Floor & Atmosphere
-          </button>
-          <button
-            onClick={() => setActiveView('menu')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
-              activeView === 'menu'
-                ? 'bg-[var(--theme-accent)] text-black font-semibold shadow-md'
-                : 'text-[var(--theme-text-muted)] hover:text-[var(--theme-text-primary)] hover:bg-white/5'
-            }`}
-          >
-            <Coffee className="w-3.5 h-3.5" />
-            Elevated Menu
-          </button>
-          <button
-            onClick={() => setActiveView('waits')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
-              activeView === 'waits'
-                ? 'bg-[var(--theme-accent)] text-black font-semibold shadow-md'
-                : 'text-[var(--theme-text-muted)] hover:text-[var(--theme-text-primary)] hover:bg-white/5'
-            }`}
-          >
-            <Clock className="w-3.5 h-3.5" />
-            Better Waits
-          </button>
-          <button
-            onClick={() => setActiveView('connect')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
-              activeView === 'connect'
-                ? 'bg-[var(--theme-accent)] text-black font-semibold shadow-md'
-                : 'text-[var(--theme-text-muted)] hover:text-[var(--theme-text-primary)] hover:bg-white/5'
-            }`}
-          >
-            <Users className="w-3.5 h-3.5" />
-            Connect
-          </button>
-          <button
-            onClick={() => setActiveView('team')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
-              activeView === 'team'
-                ? 'bg-[var(--theme-accent)] text-black font-semibold shadow-md'
-                : 'text-[var(--theme-text-muted)] hover:text-[var(--theme-text-primary)] hover:bg-white/5'
-            }`}
-          >
-            <ShieldCheck className="w-3.5 h-3.5" />
-            Café Team Mode
-          </button>
-        </nav>
-
-        {/* Right action cluster */}
-        <div className="flex items-center gap-2 sm:gap-3">
-          {/* Multi-Theme 4-Color Selector Pill */}
-          <ThemeSelector />
-
-          {/* Editable Seating Zone & Table Pill Badge */}
-          <button
-            onClick={onOpenSeatingModal}
-            title="Click to change your seating zone or table number"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--theme-surface-glass)] hover:bg-[var(--theme-surface-elevated)] border border-[var(--theme-border)] text-xs text-[var(--theme-text-primary)] transition-all cursor-pointer group shadow-sm"
-          >
-            <MapPin className="w-3.5 h-3.5 text-[var(--theme-accent)] group-hover:scale-110 transition-transform" />
-            <span className="font-semibold text-[var(--theme-text-primary)] hidden xs:inline">
+        {/* =========================================================================
+            MOBILE SUB-HEADER BANNER (< 640px): Persistent Slim Sub-Strip
+        ========================================================================= */}
+        <div className="sm:hidden flex items-center justify-between px-4 py-1.5 bg-[var(--theme-surface-glass)] border-t border-[var(--theme-border)]/60 text-xs text-[var(--theme-text-muted)]">
+          <div className="flex items-center gap-2 truncate">
+            <span 
+              className="w-2 h-2 rounded-full flex-shrink-0" 
+              style={{ backgroundColor: currentZone.accentColor }} 
+            />
+            <span className="font-semibold text-[var(--theme-text-primary)] truncate">
               {currentZone.name}
             </span>
-            <span className="text-[var(--theme-border)] hidden sm:inline">—</span>
+            <span className="text-[var(--theme-border-accent)] opacity-60">·</span>
             <span className="font-mono text-[var(--theme-pop)] font-bold">
               {tableNumber}
             </span>
-            <span className="text-[10px] text-[var(--theme-text-muted)] underline ml-1 hidden md:inline">
-              Edit
-            </span>
-          </button>
+          </div>
 
-          {/* Guest Profile badge if authenticated via Option A */}
-          {customerProfile?.isVerified && (
-            <div 
-              title={`Logged in as ${customerProfile.name} (+91 ${customerProfile.phone})`}
-              className="hidden lg:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-[#10B981]/15 border border-[#10B981]/30 text-xs text-[#10B981]"
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-ping" />
-              <span className="font-medium truncate max-w-[90px]">{customerProfile.name}</span>
-            </div>
-          )}
-
-          {/* Ambient Soundscape Simulator */}
           <button
-            onClick={onToggleAmbientSound}
-            title={ambientSoundPlaying ? 'Pause café ambient soundscape' : 'Play café acoustic soundscape'}
-            className={`p-2 rounded-xl border text-xs transition-all cursor-pointer ${
-              ambientSoundPlaying
-                ? 'bg-[var(--theme-accent)]/20 border-[var(--theme-accent)] text-[var(--theme-pop)]'
-                : 'bg-[var(--theme-surface-glass)] border-[var(--theme-border)] text-[var(--theme-text-muted)] hover:text-[var(--theme-text-primary)]'
-            }`}
+            onClick={onOpenSeatingModal}
+            className="flex items-center gap-1 text-[11px] font-semibold text-[var(--theme-accent)] hover:underline ml-2 flex-shrink-0 cursor-pointer"
           >
-            <Volume2 className="w-4 h-4" />
-          </button>
-
-          {/* Vouchers & Badges Button */}
-          <button
-            onClick={onOpenVouchers}
-            title="View earned vouchers & badges"
-            className="relative p-2 rounded-xl bg-[var(--theme-surface-glass)] hover:bg-[var(--theme-surface-elevated)] border border-[var(--theme-border)] text-[var(--theme-text-primary)] transition-all cursor-pointer"
-          >
-            <Ticket className="w-4 h-4 text-[var(--theme-pop)]" />
-            {voucherCount > 0 && (
-              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[var(--theme-accent)] text-[10px] font-bold text-black flex items-center justify-center">
-                {voucherCount}
-              </span>
-            )}
-          </button>
-
-          {/* Cart & Challenge Button */}
-          <button
-            onClick={onOpenCart}
-            title="Review order & start mandatory challenge"
-            className="relative flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--theme-surface-glass)] hover:bg-[var(--theme-surface-elevated)] border border-[var(--theme-border)] text-xs font-medium text-[var(--theme-text-primary)] transition-all cursor-pointer"
-          >
-            <ShoppingBag className="w-4 h-4 text-[var(--theme-accent)]" />
-            <span className="hidden sm:inline">Order</span>
-            {cartCount > 0 && (
-              <span className="w-5 h-5 rounded-full bg-[var(--theme-accent)] text-black font-bold text-[11px] flex items-center justify-center animate-bounce">
-                {cartCount}
-              </span>
-            )}
-          </button>
-
-          {/* Aria Summon Button */}
-          <button
-            onClick={onOpenAriaChat}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-gradient-to-r from-[var(--theme-accent)] to-[var(--theme-pop)] text-black text-xs font-bold shadow-md shadow-[var(--theme-glow)] hover:brightness-110 active:scale-95 transition-all cursor-pointer"
-          >
-            <div className="relative">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-white rounded-full animate-ping" />
-            </div>
-            <span>Aria</span>
+            <span>Change</span>
+            <Edit3 className="w-3 h-3" />
           </button>
         </div>
-      </div>
+      </header>
 
-      {/* Mobile nav drawer strip */}
-      <div className="flex md:hidden items-center justify-around mt-2 pt-2 border-t border-[var(--theme-border)] gap-1 text-[11px]">
-        <button
-          onClick={() => setActiveView('explore')}
-          className={`px-2 py-1 rounded transition-colors ${
-            activeView === 'explore' ? 'text-[var(--theme-accent)] font-semibold' : 'text-[var(--theme-text-muted)]'
-          }`}
-        >
-          Ground Floor
-        </button>
-        <button
-          onClick={() => setActiveView('menu')}
-          className={`px-2 py-1 rounded transition-colors ${
-            activeView === 'menu' ? 'text-[var(--theme-accent)] font-semibold' : 'text-[var(--theme-text-muted)]'
-          }`}
-        >
-          Menu
-        </button>
-        <button
-          onClick={() => setActiveView('waits')}
-          className={`px-2 py-1 rounded transition-colors ${
-            activeView === 'waits' ? 'text-[var(--theme-accent)] font-semibold' : 'text-[var(--theme-text-muted)]'
-          }`}
-        >
-          Waits
-        </button>
-        <button
-          onClick={() => setActiveView('connect')}
-          className={`px-2 py-1 rounded transition-colors ${
-            activeView === 'connect' ? 'text-[var(--theme-accent)] font-semibold' : 'text-[var(--theme-text-muted)]'
-          }`}
-        >
-          Connect
-        </button>
-        <button
-          onClick={() => setActiveView('team')}
-          className={`px-2 py-1 rounded transition-colors ${
-            activeView === 'team' ? 'text-[var(--theme-accent)] font-semibold' : 'text-[var(--theme-text-muted)]'
-          }`}
-        >
-          Team Mode
-        </button>
-      </div>
-    </header>
+      {/* =========================================================================
+          MOBILE SLIDE-OUT OFF-CANVAS DRAWER (< 640px)
+      ========================================================================= */}
+      {isMobileDrawerOpen && (
+        <div className="fixed inset-0 z-50 sm:hidden animate-fadeIn">
+          {/* Backdrop overlay */}
+          <div 
+            onClick={() => setIsMobileDrawerOpen(false)}
+            className="absolute inset-0 bg-black/75 backdrop-blur-sm transition-opacity"
+          />
+
+          {/* Drawer container from the right */}
+          <div className="absolute top-0 right-0 bottom-0 w-[84%] max-w-[340px] bg-[var(--theme-surface-elevated)] border-l border-[var(--theme-border-accent)] p-5 shadow-2xl flex flex-col justify-between overflow-y-auto animate-slideLeft z-10 pb-[max(20px,env(safe-area-inset-bottom))]">
+            
+            {/* Drawer Header */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-[var(--theme-border)]">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[var(--theme-accent)] to-[var(--theme-pop)] p-[1px]">
+                    <div className="w-full h-full bg-[var(--theme-bg)] rounded-[7px] flex items-center justify-center">
+                      <span className="font-serif text-sm font-bold text-[var(--theme-text-primary)]">L</span>
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="font-serif text-sm font-bold text-[var(--theme-text-primary)]">
+                      LUMINA CAFÉ
+                    </h3>
+                    <p className="text-[10px] text-[var(--theme-text-muted)]">
+                      Ground Floor Experience
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => setIsMobileDrawerOpen(false)}
+                  className="p-1.5 rounded-lg bg-[var(--theme-surface)] text-[var(--theme-text-muted)] hover:text-[var(--theme-text-primary)] cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* User Account / Session Status Card */}
+              <div className="p-3 rounded-xl bg-[var(--theme-surface)] border border-[var(--theme-border)] space-y-1">
+                <div className="text-[10px] uppercase tracking-wider text-[var(--theme-text-muted)] font-semibold">
+                  Session Status
+                </div>
+                {customerProfile?.isVerified ? (
+                  <div className="flex items-center gap-2 text-xs">
+                    <span className="w-2 h-2 rounded-full bg-[#10B981] animate-ping" />
+                    <span className="font-bold text-[var(--theme-text-primary)]">
+                      {customerProfile.name}
+                    </span>
+                    <span className="text-[10px] text-[var(--theme-text-muted)] font-mono">
+                      (+91 {customerProfile.phone})
+                    </span>
+                  </div>
+                ) : (
+                  <div className="text-xs text-[var(--theme-text-muted)]">
+                    Guest Ordering · Tabletop Verified
+                  </div>
+                )}
+              </div>
+
+              {/* Navigation Links */}
+              <div className="space-y-1.5 pt-2">
+                <div className="text-[10px] uppercase tracking-wider text-[var(--theme-text-muted)] font-semibold px-2 pb-1">
+                  Explore Lumina
+                </div>
+
+                <button
+                  onClick={() => handleNavClick('explore')}
+                  className={`w-full px-3 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-between transition-colors cursor-pointer ${
+                    activeView === 'explore'
+                      ? 'bg-[var(--theme-accent)] text-black shadow-md'
+                      : 'text-[var(--theme-text-primary)] hover:bg-[var(--theme-surface)]'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <MapPin className="w-4 h-4" />
+                    <span>Ground Floor & Atmosphere</span>
+                  </div>
+                  <ChevronRight className="w-3.5 h-3.5 opacity-60" />
+                </button>
+
+                <button
+                  onClick={() => handleNavClick('menu')}
+                  className={`w-full px-3 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-between transition-colors cursor-pointer ${
+                    activeView === 'menu'
+                      ? 'bg-[var(--theme-accent)] text-black shadow-md'
+                      : 'text-[var(--theme-text-primary)] hover:bg-[var(--theme-surface)]'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Coffee className="w-4 h-4" />
+                    <span>Elevated Menu</span>
+                  </div>
+                  <ChevronRight className="w-3.5 h-3.5 opacity-60" />
+                </button>
+
+                <button
+                  onClick={() => handleNavClick('waits')}
+                  className={`w-full px-3 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-between transition-colors cursor-pointer ${
+                    activeView === 'waits'
+                      ? 'bg-[var(--theme-accent)] text-black shadow-md'
+                      : 'text-[var(--theme-text-primary)] hover:bg-[var(--theme-surface)]'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Clock className="w-4 h-4" />
+                    <span>Better Waits & Timing</span>
+                  </div>
+                  <ChevronRight className="w-3.5 h-3.5 opacity-60" />
+                </button>
+
+                <button
+                  onClick={() => handleNavClick('connect')}
+                  className={`w-full px-3 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-between transition-colors cursor-pointer ${
+                    activeView === 'connect'
+                      ? 'bg-[var(--theme-accent)] text-black shadow-md'
+                      : 'text-[var(--theme-text-primary)] hover:bg-[var(--theme-surface)]'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Users className="w-4 h-4" />
+                    <span>Connect with Tablemates</span>
+                  </div>
+                  <ChevronRight className="w-3.5 h-3.5 opacity-60" />
+                </button>
+
+                <button
+                  onClick={() => handleNavClick('team')}
+                  className={`w-full px-3 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-between transition-colors cursor-pointer ${
+                    activeView === 'team'
+                      ? 'bg-[var(--theme-accent)] text-black shadow-md'
+                      : 'text-[var(--theme-text-primary)] hover:bg-[var(--theme-surface)]'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <ShieldCheck className="w-4 h-4" />
+                    <span>Café Team Ops</span>
+                  </div>
+                  <ChevronRight className="w-3.5 h-3.5 opacity-60" />
+                </button>
+              </div>
+
+              {/* Utility shortcuts */}
+              <div className="space-y-2 pt-3 border-t border-[var(--theme-border)]">
+                <button
+                  onClick={() => {
+                    setIsMobileDrawerOpen(false);
+                    onOpenVouchers();
+                  }}
+                  className="w-full px-3 py-2 rounded-xl bg-[var(--theme-surface)] border border-[var(--theme-border)] text-xs text-[var(--theme-text-primary)] flex items-center justify-between cursor-pointer"
+                >
+                  <div className="flex items-center gap-2">
+                    <Ticket className="w-4 h-4 text-[var(--theme-pop)]" />
+                    <span>Vouchers & Badges</span>
+                  </div>
+                  <span className="font-bold text-[var(--theme-accent)] font-mono">{voucherCount}</span>
+                </button>
+
+                <button
+                  onClick={onToggleAmbientSound}
+                  className="w-full px-3 py-2 rounded-xl bg-[var(--theme-surface)] border border-[var(--theme-border)] text-xs text-[var(--theme-text-primary)] flex items-center justify-between cursor-pointer"
+                >
+                  <div className="flex items-center gap-2">
+                    <Volume2 className="w-4 h-4 text-[var(--theme-accent)]" />
+                    <span>Acoustic Soundscape</span>
+                  </div>
+                  <span className="text-[10px] text-[var(--theme-text-muted)]">
+                    {ambientSoundPlaying ? 'Playing' : 'Paused'}
+                  </span>
+                </button>
+              </div>
+            </div>
+
+            {/* Drawer Bottom Actions: Talk to Aria */}
+            <div className="pt-4 border-t border-[var(--theme-border)] space-y-2">
+              <button
+                onClick={() => {
+                  setIsMobileDrawerOpen(false);
+                  onOpenAriaChat();
+                }}
+                className="w-full py-3 rounded-xl bg-gradient-to-r from-[var(--theme-accent)] to-[var(--theme-pop)] text-black font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-[var(--theme-glow)] cursor-pointer"
+              >
+                <Sparkles className="w-4 h-4" />
+                <span>Talk to Aria AI</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 };

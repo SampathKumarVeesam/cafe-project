@@ -7,13 +7,18 @@ import { app } from './serverApp.ts';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const PORT = Number(process.env.PORT) || 3000;
+const HOST = process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost';
 
 // Vite Middleware for dev / Static for prod
 async function startServer() {
   if (process.env.NODE_ENV !== 'production') {
     const { createServer: createViteServer } = await import('vite');
     const vite = await createViteServer({
-      server: { middlewareMode: true },
+      server: {
+        middlewareMode: true,
+        host: 'localhost',
+        port: PORT,
+      },
       appType: 'spa',
     });
     app.use(vite.middlewares);
@@ -35,8 +40,8 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Lumina Café server with Aria Companion listening on http://0.0.0.0:${PORT}`);
+  app.listen(PORT, HOST, () => {
+    console.log(`Lumina Café server with Aria Companion listening on http://${HOST}:${PORT}`);
   });
 }
 
